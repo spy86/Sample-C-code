@@ -5,8 +5,20 @@ jobs:
       - image: circleci/openjdk:8
     steps:
       - run:
-          name: Download SonarQube
-          command: git clone https://bitbucket.org/devops_sysops/c.git && curl --insecure -OL https://sonarcloud.io/static/cpp/build-wrapper-linux-x86.zip && unzip build-wrapper-linux-x86.zip && build-wrapper-linux-x86-64 --out-dir bw-output make clean all && sonar-scanner -Dsonar.projectKey=UnixC -Dsonar.organization=$ORG -Dsonar.sources=. -Dsonar.cfamily.build-wrapper-output=bw-output -Dsonar.host.url=https://sonarcloud.io -Dsonar.login=$TOKEN
+          name: Clone repository
+          command: git clone https://bitbucket.org/devops_sysops/c.git
+      - run: 
+          name: Download build wrapper 
+          command: curl --insecure -OL https://sonarcloud.io/static/cpp/build-wrapper-linux-x86.zip
+      - run: 
+          name: Unzip build wrapper 
+          command: unzip build-wrapper-linux-x86.zip
+      - run: 
+          name: Build 
+          command: build-wrapper-linux-x86-64 --out-dir bw-output make clean all
+      - run: 
+          name: Run SonarQube scanner 
+          command: sonar-scanner -Dsonar.projectKey=UnixC -Dsonar.organization=$ORG -Dsonar.sources=. -Dsonar.cfamily.build-wrapper-output=bw-output -Dsonar.host.url=https://sonarcloud.io -Dsonar.login=$TOKEN
 workflows:
   version: 2
   test:
